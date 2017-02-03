@@ -1,0 +1,7 @@
+/.hypothesis
+/.tox
+/_trial_temp
+/src/flake8_twisted.egg-info/
+*~
+.DS_Store
+__pycache__
