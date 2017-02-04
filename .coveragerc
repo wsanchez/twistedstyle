@@ -1,6 +1,6 @@
 [run]
 branch = True
-source = flake8-twisted
+source = twistedstyle
 
 [report]
 fail_under = 100

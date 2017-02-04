@@ -5,7 +5,7 @@ Flake8 plugin for Twisted code style
    :maxdepth: 2
    :caption: Contents:
 
-   flake8_twisted
+   twistedstyle
 
 
 Indices and tables

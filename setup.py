@@ -15,14 +15,14 @@ from setuptools import setup, find_packages  # noqa
 
 sys.path.insert(0, "src")
 
-from flake8_twisted import __version__ as version_string  # noqa
+from twistedstyle import __version__ as version_string  # noqa
 
 
 #
 # Options
 #
 
-name = "flake8-twisted"
+name = "twistedstyle"
 description = "Flake8 plugin for Twisted code style"
 
 readme_path = Path(__file__).parent / "README.rst"
@@ -31,7 +31,7 @@ try:
 except IOError:
     long_description = None
 
-url = "https://github.com/wsanchez/flake8-twisted"
+url = "https://github.com/wsanchez/twistedstyle"
 
 author = "Wilfredo S\xe1nchez Vega"
 
@@ -56,6 +56,9 @@ classifiers = [
 
 entry_points = {
     "console_scripts": [],
+    "flake8.extension": [
+        "t = twistedstyle.Flake8Plugin",
+    ],
 }
 
 

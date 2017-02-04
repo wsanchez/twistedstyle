@@ -2,7 +2,7 @@ extensions = ["sphinx.ext.autodoc"]
 
 # Project info
 
-project = "flake8_twisted"
+project = "twistedstyle"
 copyright = "2017"
 author = u"Wilfredo S\xe1nchez Vega"
 
