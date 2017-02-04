@@ -15,7 +15,7 @@ from setuptools import setup, find_packages  # noqa
 
 sys.path.insert(0, "src")
 
-from twistedstyle import __version__ as version_string  # noqa
+from twistedstyle.version import version as version_string  # noqa
 
 
 #
@@ -57,7 +57,7 @@ classifiers = [
 entry_points = {
     "console_scripts": [],
     "flake8.extension": [
-        "t = twistedstyle.Flake8Plugin",
+        "t = twistedstyle.flake8.Flake8Plugin",
     ],
 }
 
