@@ -57,7 +57,7 @@ classifiers = [
 entry_points = {
     "console_scripts": [],
     "flake8.extension": [
-        "t = twistedstyle.flake8.Flake8Plugin",
+        "t = twistedstyle.flake8:TwistedStyleExtension",
     ],
 }
 

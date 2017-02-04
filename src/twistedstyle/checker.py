@@ -4,21 +4,28 @@ Twisted style checker
 
 from typing import Iterable
 
-from attr import attrib, attrs
 
-
-@attrs
-class Checker(object):
+class TwistedStyleChecker(object):
     """
     Twisted style checker
     """
 
-    filename = attrib()
-    tree = attrib()
-    line = attrib()
+    def __init__(self, filename: str, tree, lines) -> None:
+        """
+        :param filename: The name of the file to check.
+
+        :param line: The line number in the file to check.
+
+        :param tree: The AST tree of the file to check.
+        """
+        self.filename = filename
+        self.tree = tree
+        self.lines = lines
 
     def check(self) -> Iterable:
         """
         Run this checker.
         """
-        print(self.filename, self.line, self.tree)
+        yield "Hello there! {} :: {} :: {}".format(
+            self.filename, self.lines, self.tree
+        )

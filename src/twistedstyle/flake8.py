@@ -4,19 +4,19 @@ Flake8 plugin
 
 from typing import Iterable
 
-from .checker import Checker
+from .checker import TwistedStyleChecker
 from .version import version
 
 
-class Flake8Plugin(object):
+class TwistedStyleExtension(object):
     """
-    Flake8 plugin
+    Twisted style Flake8 extension
     """
 
-    name = "twisted"
+    name = "twisted-style"
     version = version
 
-    def __init__(self, filename: str, line: int, tree: object) -> None:
+    def __init__(self, filename: str, tree, lines) -> None:
         """
         :param filename: The name of the file to check.
 
@@ -24,11 +24,13 @@ class Flake8Plugin(object):
 
         :param tree: The AST tree of the file to check.
         """
-        self.checker = Checker(filename, tree, line)
+        self.checker = TwistedStyleChecker(
+            filename=filename, tree=tree, lines=lines
+        )
 
     def run(self) -> Iterable:
         """
         Run this plugin.
         """
-        for error in self.checker.check():
-            yield error
+        for message in self.checker.check():
+            yield (1, 1, "t001 {}".format(message), type(self))
