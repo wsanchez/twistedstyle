@@ -16,7 +16,7 @@ class TwistedStyleExtension(object):
     name = "twisted-style"
     version = version
 
-    def __init__(self, filename: str, tree, lines) -> None:
+    def __init__(self, tree, filename: str, lines=None) -> None:
         """
         :param filename: The name of the file to check.
 
