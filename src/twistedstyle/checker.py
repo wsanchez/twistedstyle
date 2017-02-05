@@ -2,7 +2,34 @@
 Twisted style checker
 """
 
-from typing import Iterable
+from ast import AST
+from typing import Iterable, Sequence
+
+
+__all__ = (
+    "TwistedStyleError",
+    "TwistedStyleChecker",
+)
+
+
+class TwistedStyleError(object):
+    """
+    Error from :class:`TwistedStyleChecker`.
+    """
+
+    def __init__(
+        self, message: str, lineNumber: int, columnNumber: int
+    ) -> None:
+        """
+        :param message: The error message.
+
+        :param lineNumber: The line number corresponding to the error.
+
+        :param columnNumber: The column number corresponding to the error.
+        """
+        self.message = message
+        self.lineNumber = lineNumber
+        self.columnNumber = columnNumber
 
 
 class TwistedStyleChecker(object):
@@ -10,7 +37,7 @@ class TwistedStyleChecker(object):
     Twisted style checker
     """
 
-    def __init__(self, filename: str, tree, lines) -> None:
+    def __init__(self, filename: str, tree: AST, lines: Sequence[str]) -> None:
         """
         :param filename: The name of the file to check.
 
@@ -22,10 +49,14 @@ class TwistedStyleChecker(object):
         self.tree = tree
         self.lines = lines
 
-    def check(self) -> Iterable:
+    def check(self) -> Iterable[TwistedStyleError]:
         """
         Run this checker.
+
+        :return: Any errors found in the file.
         """
-        yield "Hello there! {} :: {} :: {}".format(
-            self.filename, self.lines, self.tree
+        yield TwistedStyleError(
+            message="Hello there!",
+            lineNumber=0,
+            columnNumber=0,
         )

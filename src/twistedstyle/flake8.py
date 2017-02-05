@@ -8,6 +8,11 @@ from .checker import TwistedStyleChecker
 from .version import version
 
 
+__all__ = (
+    "TwistedStyleExtension",
+)
+
+
 class TwistedStyleExtension(object):
     """
     Twisted style Flake8 extension
@@ -32,5 +37,10 @@ class TwistedStyleExtension(object):
         """
         Run this plugin.
         """
-        for message in self.checker.check():
-            yield (1, 1, "t001 {}".format(message), type(self))
+        for error in self.checker.check():
+            yield (
+                error.lineNumber,
+                error.columnNumber,
+                "t001 {}".format(error.message),
+                type(self)
+            )
