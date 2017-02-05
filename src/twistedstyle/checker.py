@@ -2,8 +2,8 @@
 Twisted style checker
 """
 
-from ast import AST
-from typing import Iterable, Sequence
+from ast import AST, NodeVisitor, iter_child_nodes
+from typing import Iterable, Sequence, Tuple
 
 
 __all__ = (
@@ -41,13 +41,14 @@ class TwistedStyleChecker(object):
         """
         :param filename: The name of the file to check.
 
-        :param line: The line number in the file to check.
+        :param lines: The lines in the file to check.
 
         :param tree: The AST tree of the file to check.
         """
         self.filename = filename
         self.tree = tree
         self.lines = lines
+        self._visitor = CheckerNodeVisitor()
 
     def check(self) -> Iterable[TwistedStyleError]:
         """
@@ -55,8 +56,19 @@ class TwistedStyleChecker(object):
 
         :return: Any errors found in the file.
         """
-        yield TwistedStyleError(
-            message="Hello there!",
-            lineNumber=0,
-            columnNumber=0,
-        )
+        self._visitor.visit(self.tree)
+
+        return ()
+
+
+class CheckerNodeVisitor(NodeVisitor):
+    """
+    Node visitor for :class:`TwistedStyleChecker`.
+    """
+
+    def visit(self, node: AST, _parents: Tuple[AST] = ()) -> None:
+        print("{}{}".format(".   " * len(_parents), node))
+
+        childParents = _parents + (node,)
+        for child in iter_child_nodes(node):
+            self.visit(child, childParents)
