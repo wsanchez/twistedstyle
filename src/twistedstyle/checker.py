@@ -56,6 +56,8 @@ class TwistedStyleChecker(object):
 
         :return: Any errors found in the file.
         """
+        print("*" * 80)
+        print("Checking file: {}".format(self.filename))
         self._visitor.visit(self.tree)
 
         return ()
