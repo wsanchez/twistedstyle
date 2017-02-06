@@ -1,5 +1,5 @@
 """
-Twisted style checker
+Master Twisted style checker
 """
 
 import sys
@@ -37,7 +37,7 @@ class TwistedStyleError(object):
 
 class TwistedStyleChecker(object):
     """
-    Twisted style checker
+    Master Twisted style checker
     """
 
     def __init__(self, filename: str, tree: AST, lines: Sequence[str]) -> None:
@@ -63,7 +63,7 @@ class TwistedStyleChecker(object):
         self.filename = filename
         self.tree = tree
         self.lines = lines
-        self._visitor = CheckerNodeVisitor(checker=self)
+        self._visitor = CheckerNodeVisitor(master=self)
 
     def check(self) -> Iterable[TwistedStyleError]:
         """
@@ -84,15 +84,17 @@ class CheckerNodeVisitor(NodeVisitor):
     Node visitor for :class:`TwistedStyleChecker`.
     """
 
-    def __init__(self, checker: TwistedStyleChecker) -> None:
-        self._checker = checker
+    def __init__(self, master: TwistedStyleChecker) -> None:
+        self._master = master
 
         if not hasattr(self.__class__, "_log"):
-            self.__class__._log = Logger(observer=checker.logObserver)
+            self.__class__._log = Logger(observer=master.logObserver)
 
     def visit(self, node: AST, _parents: Tuple[AST] = ()) -> None:
         self._log.debug(
-            "{indent}{node}", indent=".   " * len(_parents), node=node
+            "{indent}{node.__class__.__name__}",
+            indent=". " * len(_parents),
+            node=node,
         )
 
         childParents = _parents + (node,)
