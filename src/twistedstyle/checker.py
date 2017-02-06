@@ -2,8 +2,11 @@
 Twisted style checker
 """
 
+import sys
 from ast import AST, NodeVisitor, iter_child_nodes
 from typing import Iterable, Sequence, Tuple
+
+from twisted.logger import Logger, textFileLogObserver
 
 
 __all__ = (
@@ -45,10 +48,22 @@ class TwistedStyleChecker(object):
 
         :param tree: The AST tree of the file to check.
         """
+        #
+        # This weirdness is because we are a plugin, which is to say we aren't
+        # the "application", so it's not appropriate for us to start the global
+        # log observer, as we'd potentially be competing with another plugin
+        # trying to do the same thing.
+        #
+        if not hasattr(self.__class__, "logObserver"):
+            self.__class__.logObserver = textFileLogObserver(sys.stdout)
+
+        if not hasattr(self.__class__, "_log"):
+            self.__class__._log = Logger(observer=self.__class__.logObserver)
+
         self.filename = filename
         self.tree = tree
         self.lines = lines
-        self._visitor = CheckerNodeVisitor()
+        self._visitor = CheckerNodeVisitor(checker=self)
 
     def check(self) -> Iterable[TwistedStyleError]:
         """
@@ -56,8 +71,9 @@ class TwistedStyleChecker(object):
 
         :return: Any errors found in the file.
         """
-        print("*" * 80)
-        print("Checking file: {}".format(self.filename))
+        self._log.debug(
+            "Checking file: {filename}", filename=self.filename
+        )
         self._visitor.visit(self.tree)
 
         return ()
@@ -68,8 +84,16 @@ class CheckerNodeVisitor(NodeVisitor):
     Node visitor for :class:`TwistedStyleChecker`.
     """
 
+    def __init__(self, checker: TwistedStyleChecker) -> None:
+        self._checker = checker
+
+        if not hasattr(self.__class__, "_log"):
+            self.__class__._log = Logger(observer=checker.logObserver)
+
     def visit(self, node: AST, _parents: Tuple[AST] = ()) -> None:
-        print("{}{}".format(".   " * len(_parents), node))
+        self._log.debug(
+            "{indent}{node}", indent=".   " * len(_parents), node=node
+        )
 
         childParents = _parents + (node,)
         for child in iter_child_nodes(node):
