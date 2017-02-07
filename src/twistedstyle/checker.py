@@ -9,6 +9,7 @@ from typing import Iterable, Sequence, Tuple
 from twisted.logger import Logger, textFileLogObserver
 
 from .check.names import TwistedNamesChecker
+from .check.spaces import TwistedSpacesChecker
 from .error import TwistedStyleError
 from .node import Node
 
@@ -52,6 +53,8 @@ class TwistedStyleChecker(object):
         )
 
         self.checkers = set((
+            TwistedNamesChecker(**checkerArguments),
+            TwistedSpacesChecker(**checkerArguments),
         ))
 
     def check(self) -> Iterable[TwistedStyleError]:
