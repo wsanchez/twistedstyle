@@ -42,6 +42,7 @@ class TwistedNamesChecker(object):
     rootNode = attrib()
     lines = attrib()
 
+
     def check_Module(
         self, node: Node, parents=Tuple[Node]
     ) -> Iterable[TwistedStyleError]:
@@ -57,6 +58,7 @@ class TwistedNamesChecker(object):
             self._isTestModule = True
         else:
             self._isTestModule = False
+
 
     def check_ClassDef(
         self, node: Node, parents=Tuple[Node]

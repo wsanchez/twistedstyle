@@ -17,12 +17,14 @@ class Node(object):
 
     astNode = attrib()
 
+
     @property
     def name(self):
         """
         The identifier (symbol name) for this node.
         """
         return self.astNode.id
+
 
     @property
     def type(self):
@@ -32,12 +34,14 @@ class Node(object):
         """
         return self.astNode.__class__.__name__
 
+
     @property
     def lineNumber(self):
         """
         The line number corresponding to this node, if known, `None` otherwise.
         """
         return getattr(self.astNode, "lineno", None)
+
 
     @property
     def columnNumber(self):
@@ -46,6 +50,7 @@ class Node(object):
         otherwise.
         """
         return getattr(self.astNode, "col_offset", None)
+
 
     @property
     def filePosition(self):
@@ -65,12 +70,14 @@ class Node(object):
 
         return ":".join(info)
 
+
     def children(self) -> Iterable:
         """
         Look up the children of this node.
         """
         for child in iter_child_nodes(self.astNode):
             yield Node(child)
+
 
     def baseClassNames(self):
         """
@@ -82,6 +89,7 @@ class Node(object):
         for child in self.children():
             if child.type == "Name":
                 yield child.name
+
 
     def nearbyLines(self, lines, pre=3, post=3, numbered=False):
         """

@@ -34,10 +34,12 @@ class TwistedSpacesChecker(object):
         # 3xx: Methods
 
         # 4xx: Functions
+        S401 = 'function def must follow 2 blank lines'
 
     filename = attrib()
     rootNode = attrib()
     lines = attrib()
+
 
     def check_ClassDef(
         self, node: Node, parents=Tuple[Node]
@@ -45,10 +47,23 @@ class TwistedSpacesChecker(object):
         """
         Visit a class definition.
         """
-        for line in node.nearbyLines(self.lines, post=-1):
+        for line in node.nearbyLines(self.lines, pre=3, post=-1):
             if not self.isBlankLine(line):
                 yield TwistedStyleError(self.Message.S201, node, repr(line))
                 break
+
+
+    def check_FunctionDef(
+        self, node: Node, parents=Tuple[Node]
+    ) -> Iterable[TwistedStyleError]:
+        """
+        Visit a function definition.
+        """
+        for line in node.nearbyLines(self.lines, pre=2, post=-1):
+            if not self.isBlankLine(line):
+                yield TwistedStyleError(self.Message.S201, node, repr(line))
+                break
+
 
     @staticmethod
     def isBlankLine(line: str) -> bool:

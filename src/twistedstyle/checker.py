@@ -58,6 +58,7 @@ class TwistedStyleChecker(object):
             TwistedSpacesChecker(**checkerArguments),
         ))
 
+
     def check(self) -> Iterable[TwistedStyleError]:
         """
         Run this checker.
@@ -69,6 +70,7 @@ class TwistedStyleChecker(object):
         )
 
         return self.checkNode(self.rootNode)
+
 
     def checkNode(self, node: Node, _parents: Tuple[Node] = ()) -> None:
         """
