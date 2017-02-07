@@ -8,6 +8,7 @@ from typing import Iterable
 from attr import attrib, attrs
 
 
+
 @attrs
 class Node(object):
     """

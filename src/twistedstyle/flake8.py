@@ -13,6 +13,7 @@ __all__ = (
 )
 
 
+
 class TwistedStyleExtension(object):
     """
     Twisted style Flake8 extension

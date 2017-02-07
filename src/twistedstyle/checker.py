@@ -17,6 +17,7 @@ from .node import Node
 __all__ = ("TwistedStyleChecker")
 
 
+
 class TwistedStyleChecker(object):
     """
     Twisted style checker

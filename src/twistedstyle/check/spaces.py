@@ -11,6 +11,7 @@ from ..error import TwistedStyleError
 from ..node import Node
 
 
+
 @attrs
 class TwistedSpacesChecker(object):
     """
