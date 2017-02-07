@@ -23,4 +23,5 @@ html_theme = "sphinx_rtd_theme"
 nitpicky = True
 nitpick_ignore = [
     ("py:class", "object"),
+    ("py:class", "enum.Enum"),
 ]

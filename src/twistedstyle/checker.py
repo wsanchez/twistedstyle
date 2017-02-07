@@ -1,43 +1,24 @@
 """
-Master Twisted style checker
+Twisted style checker
 """
 
 import sys
-from ast import AST, NodeVisitor, iter_child_nodes
+from ast import AST
 from typing import Iterable, Sequence, Tuple
 
 from twisted.logger import Logger, textFileLogObserver
 
-
-__all__ = (
-    "TwistedStyleError",
-    "TwistedStyleChecker",
-)
+from .check.names import TwistedNamesChecker
+from .error import TwistedStyleError
+from .node import Node
 
 
-class TwistedStyleError(object):
-    """
-    Error from :class:`TwistedStyleChecker`.
-    """
-
-    def __init__(
-        self, message: str, lineNumber: int, columnNumber: int
-    ) -> None:
-        """
-        :param message: The error message.
-
-        :param lineNumber: The line number corresponding to the error.
-
-        :param columnNumber: The column number corresponding to the error.
-        """
-        self.message = message
-        self.lineNumber = lineNumber
-        self.columnNumber = columnNumber
+__all__ = ("TwistedStyleChecker")
 
 
 class TwistedStyleChecker(object):
     """
-    Master Twisted style checker
+    Twisted style checker
     """
 
     def __init__(self, filename: str, tree: AST, lines: Sequence[str]) -> None:
@@ -61,9 +42,17 @@ class TwistedStyleChecker(object):
             self.__class__._log = Logger(observer=self.__class__.logObserver)
 
         self.filename = filename
-        self.tree = tree
+        self.rootNode = Node(tree)
         self.lines = lines
-        self._visitor = CheckerNodeVisitor(master=self)
+
+        checkerArguments = dict(
+            filename=self.filename,
+            rootNode=self.rootNode,
+            lines=tuple(self.lines),
+        )
+
+        self.checkers = set((
+        ))
 
     def check(self) -> Iterable[TwistedStyleError]:
         """
@@ -74,29 +63,32 @@ class TwistedStyleChecker(object):
         self._log.debug(
             "Checking file: {filename}", filename=self.filename
         )
-        self._visitor.visit(self.tree)
 
-        return ()
+        return self.checkNode(self.rootNode)
 
+    def checkNode(self, node: Node, _parents: Tuple[Node] = ()) -> None:
+        """
+        Check a node.
 
-class CheckerNodeVisitor(NodeVisitor):
-    """
-    Node visitor for :class:`TwistedStyleChecker`.
-    """
-
-    def __init__(self, master: TwistedStyleChecker) -> None:
-        self._master = master
-
-        if not hasattr(self.__class__, "_log"):
-            self.__class__._log = Logger(observer=master.logObserver)
-
-    def visit(self, node: AST, _parents: Tuple[AST] = ()) -> None:
+        :param node: The node to check.
+        """
         self._log.debug(
-            "{indent}{node.__class__.__name__}",
+            "{log_source.filename}: {indent}{node.type} ({node.filePosition})",
             indent=". " * len(_parents),
             node=node,
         )
 
+        checkMethodName = "check_{}".format(node.type)
+
+        for checker in self.checkers:
+            check = getattr(checker, checkMethodName, None)
+            if check is not None:
+                messages = check(node, parents=_parents)
+                if messages is not None:
+                    for message in messages:
+                        yield message
+
         childParents = _parents + (node,)
-        for child in iter_child_nodes(node):
-            self.visit(child, childParents)
+        for child in node.children():
+            for message in self.checkNode(child, childParents):
+                yield message

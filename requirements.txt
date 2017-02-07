@@ -1,3 +1,4 @@
 -e .  # Get self and dependencies from setup.py
 
+    attrs
     twisted
