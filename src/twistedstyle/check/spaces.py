@@ -51,4 +51,4 @@ class TwistedSpacesChecker(object):
         """
         Check that a line is blank.
         """
-        return line == ""
+        return line.strip() == ""
