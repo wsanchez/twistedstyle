@@ -8,6 +8,7 @@ from attr import attrib, attrs
 __all__ = ("TwistedStyleError")
 
 
+
 @attrs
 class TwistedStyleError(object):
     """
@@ -16,3 +17,4 @@ class TwistedStyleError(object):
 
     message = attrib()
     node = attrib()
+    example = attrib(default=None)

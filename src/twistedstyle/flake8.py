@@ -38,9 +38,13 @@ class TwistedStyleExtension(object):
         Run this plugin.
         """
         for error in self.checker.check():
+            message = "t{} {}".format(error.message.name, error.message.value)
+            if error.example is not None:
+                message = "{}: {}".format(message, error.example)
+
             yield (
                 error.node.lineNumber,
                 error.node.columnNumber,
-                "t{} {}".format(error.message.name, error.message.value),
+                message,
                 type(self)
             )
