@@ -50,7 +50,9 @@ class TwistedNamesChecker(object):
         Visit a module.
         """
         if hasattr(self, "_isTestModule"):
-            raise RuntimeError("Module within module not expected")
+            raise RuntimeError(
+                "Module within module not expected in {}".format(self.filename)
+            )
 
         pathSegments = self.filename.split(fileSeparator)
 
@@ -60,7 +62,7 @@ class TwistedNamesChecker(object):
             self._isTestModule = False
 
 
-    def check_ClassDef(
+    def check_Class(
         self, node: Node, parents=Tuple[Node]
     ) -> Iterable[TwistedStyleError]:
         """

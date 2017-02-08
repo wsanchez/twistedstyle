@@ -79,20 +79,21 @@ class TwistedStyleChecker(object):
         :param node: The node to check.
         """
         self._log.debug(
-            "{log_source.filename}: {indent}{node.type} ({node.filePosition})",
+            "{log_source.filename}: {indent}{node}",
             indent=". " * len(_parents),
             node=node,
         )
 
-        checkMethodName = "check_{}".format(node.type)
+        if node.type is not None:
+            checkMethodName = "check_{}".format(node.type.name)
 
-        for checker in self.checkers:
-            check = getattr(checker, checkMethodName, None)
-            if check is not None:
-                messages = check(node, parents=_parents)
-                if messages is not None:
-                    for message in messages:
-                        yield message
+            for checker in self.checkers:
+                check = getattr(checker, checkMethodName, None)
+                if check is not None:
+                    messages = check(node, parents=_parents)
+                    if messages is not None:
+                        for message in messages:
+                            yield message
 
         childParents = _parents + (node,)
         for child in node.children():

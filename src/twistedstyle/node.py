@@ -3,6 +3,7 @@ AST node.
 """
 
 from ast import iter_child_nodes
+from enum import Enum
 from typing import Iterable
 
 from attr import attrib, attrs
@@ -15,7 +16,50 @@ class Node(object):
     AST node.
     """
 
+    class NodeType(Enum):
+        """
+        Node types.
+        """
+        Module = object()
+        Class = object()
+        Method = object()
+        Function = object()
+
+
+    class NodeTypeError(TypeError):
+        """
+        Wrong node type for requested operation.
+        """
+
+
+    nodeTypeMap = dict(
+        Module=NodeType.Module,
+        ClassDef=NodeType.Class,
+    )
+
     astNode = attrib()
+
+
+    def __str__(self):
+        nodeType = self.type
+        if nodeType is None:
+            nodeType = "{{{}}}".format(self.astNode.__class__.__name__)
+        else:
+            nodeType = nodeType.name
+
+        pos = self.filePosition
+        if pos:
+            pos = "@{}".format(pos)
+
+        name = self.name
+        if name:
+            name = "({})".format(name)
+        else:
+            name = ""
+
+        return "{nodeType}{name}{position}".format(
+            nodeType=nodeType, name=name, position=pos
+        )
 
 
     @property
@@ -23,7 +67,24 @@ class Node(object):
         """
         The identifier (symbol name) for this node.
         """
-        return self.astNode.id
+        if hasattr(self.astNode, "id"):
+            return self.astNode.id
+        else:
+            return None
+
+
+    @classmethod
+    def _nodeTypeFromASTClass(cls, astClass):
+        astClassName = astClass.__name__
+
+        nodeType = cls.nodeTypeMap.get(astClassName, None)
+        if nodeType is not None:
+            return nodeType
+
+        if astClassName == "FunctionDef":
+            return cls.NodeType.Function
+
+        return None
 
 
     @property
@@ -32,7 +93,9 @@ class Node(object):
         The type of this node.
         This corresponds to the underlying AST class name.
         """
-        return self.astNode.__class__.__name__
+        if not hasattr(self, "_type"):
+            self._type = self._nodeTypeFromASTClass(self.astNode.__class__)
+        return self._type
 
 
     @property
@@ -84,7 +147,7 @@ class Node(object):
         Look up the base class of this `ClassDef` node.
         """
         if self.type != "ClassDef":
-            raise AssertionError("baseClassNames() call on non-ClassDef node")
+            raise self.NodeTypeError("Not a ClassDef: {}".format(self))
 
         for child in self.children():
             if child.type == "Name":

@@ -41,7 +41,7 @@ class TwistedSpacesChecker(object):
     lines = attrib()
 
 
-    def check_ClassDef(
+    def check_Class(
         self, node: Node, parents=Tuple[Node]
     ) -> Iterable[TwistedStyleError]:
         """
@@ -53,7 +53,7 @@ class TwistedSpacesChecker(object):
                 break
 
 
-    def check_FunctionDef(
+    def check_Function(
         self, node: Node, parents=Tuple[Node]
     ) -> Iterable[TwistedStyleError]:
         """
