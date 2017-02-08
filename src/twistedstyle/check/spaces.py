@@ -61,7 +61,7 @@ class TwistedSpacesChecker(object):
         """
         for line in node.nearbyLines(self.lines, pre=2, post=-1):
             if not self.isBlankLine(line):
-                yield TwistedStyleError(self.Message.S201, node, repr(line))
+                yield TwistedStyleError(self.Message.S401, node, repr(line))
                 break
 
 
