@@ -25,17 +25,36 @@ class Node(object):
         Method = object()
         Function = object()
 
+        Expression = object()
+
+        String = object()
+
+
+        @classmethod
+        def fromASTClass(cls, astClass):
+            astMap = dict(
+                Module=cls.Module,
+                ClassDef=cls.Class,
+                Expr=cls.Expression,
+            )
+
+            astClassName = astClass.__name__
+
+            nodeType = astMap.get(astClassName, None)
+            if nodeType is not None:
+                return nodeType
+
+            if astClassName == "FunctionDef":
+                return cls.Function
+
+            return None
+
 
     class NodeTypeError(TypeError):
         """
         Wrong node type for requested operation.
         """
 
-
-    nodeTypeMap = dict(
-        Module=NodeType.Module,
-        ClassDef=NodeType.Class,
-    )
 
     astNode = attrib()
 
@@ -73,20 +92,6 @@ class Node(object):
             return None
 
 
-    @classmethod
-    def _nodeTypeFromASTClass(cls, astClass):
-        astClassName = astClass.__name__
-
-        nodeType = cls.nodeTypeMap.get(astClassName, None)
-        if nodeType is not None:
-            return nodeType
-
-        if astClassName == "FunctionDef":
-            return cls.NodeType.Function
-
-        return None
-
-
     @property
     def type(self):
         """
@@ -94,7 +99,7 @@ class Node(object):
         This corresponds to the underlying AST class name.
         """
         if not hasattr(self, "_type"):
-            self._type = self._nodeTypeFromASTClass(self.astNode.__class__)
+            self._type = self.NodeType.fromASTClass(self.astNode.__class__)
         return self._type
 
 
